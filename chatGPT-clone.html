@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    #result{
+        padding:10px;
+        background-color:#eee;
+        margin-top:30px;
+    }
+</style>
+<h3>克隆ChatGPT功能</h3>
+<form action="/chatGPT-clone" method="post">
+    <div class="alert alert-success" id="quotas_info"></div>
+    <div class="row">
+        <div class="col-10">
+            <textarea class="form-control" rows="5" cols="20" name="question" id="question"></textarea>
+        </div>
+        <div class="col-2">
+            <br/>
+            <button type="button" id="submitbtn" class="btn btn-primary">提交问题</button>
+        </div>
+    </div>
+    <br/>
+    <div id="result">返回的结果</div>
+</form>
+{% endblock %}
+
+{% block myjavascript %}
+<script type="text/javascript">
+    $(function(){
+        show_quota_info()
+        $("#submitbtn").click(function(){
+            var url="/chatGPT-clone?question="+$("#question").val()
+            gpt_show_stream_info(url)
+        })
+    })
+</script>
+{% endblock %}
