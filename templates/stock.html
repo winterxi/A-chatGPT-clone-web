@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    #result{
+        padding:10px;
+        background-color:#eee;
+        margin-top:30px;
+    }
+</style>
+<h3>ChatGPT股票数据分析</h3>
+<h7>由于baostock官网提供的现金流数据有缺失，请暂停使用现金流分析功能</h7>
+<br/>
+<form>
+    <div class="row" style="margin-top:10px;">
+        <div class="col-8">
+            <select class="form-control" name="stock_code" id="stock_code">
+                {% for code in stock_codes %}
+                    <option value="{{code.code}}">{{code.code}}-{{code.code_name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-4">
+            <button type="button" id="submitbtn" class="btn btn-primary">股价分析</button>
+            <button type="button" id="submitcashbtn" class="btn btn-primary">现金流分析</button>
+        </div>
+    </div>
+</form>
+
+<div class="alert alert-success" id="quotas_info" style="margin-top:10px;" ></div>
+<div id="result">返回的结果</div>
+<div id="stock_table" style="margin-top=20px;padding-left=10px;padding-right=10px"></div>
+{% endblock %}
+
+{% block myjavascript %}
+<script type="text/javascript">
+    $(function(){
+         show_quota_info()
+         // 提交股票分析
+         $("#submitbtn").click(function(){
+            $("#stock_table").html("")
+            $("#result").html("")
+            var stock_code = $("#stock_code").val()
+            $.ajax({
+                    url:"/stock?data_type=stock_table&stock_code="+stock_code,
+                    type:"GET",
+                    success:function(data){$("#stock_table").html("<h5>最近一个月股票数据:</h5>"+data)}
+            })
+            var url="/stock?data_type=gpt_stock_output&stock_code="+stock_code
+            gpt_show_stream_info(url)
+         })
+         // 提交现金流分析
+         $("#submitcashbtn").click(function(){
+            $("#stock_table").html("")
+            $("#result").html("")
+            var stock_code = $("#stock_code").val()
+            $.ajax({
+                    url:"/stock?data_type=stock_cash_table&stock_code="+stock_code,
+                    type:"GET",
+                    success:function(data){$("#stock_table").html("<h5>最近五年现金流数据:</h5>"+data)}
+            })
+            var url="/stock?data_type=gpt_cash_output&stock_code="+stock_code
+            gpt_show_stream_info(url)
+         })
+    })
+</script>
+{% endblock %}
